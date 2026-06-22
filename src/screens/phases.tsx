@@ -6,6 +6,7 @@ import {
   inputHints,
   validateAnswer,
 } from "../game/engine";
+import { DEV_MODE } from "../devMode";
 import type { GameApi } from "../net/useGame";
 
 function nameOf(state: ClientGameState, id: PlayerId): string {
@@ -49,7 +50,7 @@ export function Lobby({ game, state }: PhaseProps) {
           {!enough && (
             <p className="muted">Need at least {MIN_PLAYERS} players to start.</p>
           )}
-          {import.meta.env.DEV && (
+          {DEV_MODE && (
             <button className="secondary" onClick={game.addBot}>
               + Add bot (dev)
             </button>

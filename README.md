@@ -58,6 +58,18 @@ You need at least **3 players** to start a round.
 | `npm run preview` | Preview the production build locally         |
 | `npm run lint`    | Run ESLint                                   |
 
+## Developer mode
+
+A hidden developer mode adds tools for testing the multiplayer game on a single
+device. As the **host**, it lets you add simulated bot players (which auto-answer
+and auto-vote) and a "Skip" button to jump past round timers.
+
+It is off by default and toggled with a URL flag, so it works on any build
+(including a deployed one) without being noticeable to players:
+
+- `?dev` — turn it on (remembered in `localStorage`, so type it once)
+- `?dev=off` — turn it off again
+
 ## Project layout
 
 ```

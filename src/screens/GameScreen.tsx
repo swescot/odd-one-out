@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGame, type GameMode } from "../net/useGame";
+import { DEV_MODE } from "../devMode";
 import {
   Answering,
   Discussion,
@@ -36,7 +37,7 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
           ← Leave
         </button>
         <div className="topbar-right">
-          {import.meta.env.DEV &&
+          {DEV_MODE &&
             game.isHost &&
             state &&
             state.phase !== "lobby" &&
