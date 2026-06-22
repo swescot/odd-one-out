@@ -231,9 +231,14 @@ export function viewFor(state: GameState, recipientId: PlayerId): ClientGameStat
       ? { ...state.round.card, question: "" }
       : { ...state.round.card, oooPrompt: "" };
 
+  // During answering, keep every answer entry (so clients can show accurate
+  // "X/Y submitted" progress) but blank out other players' text, since answers
+  // aren't revealed until the discussion phase.
   const answers =
     state.phase === "answering"
-      ? state.round.answers.filter((a) => a.playerId === recipientId)
+      ? state.round.answers.map((a) =>
+          a.playerId === recipientId ? a : { ...a, text: "" },
+        )
       : state.round.answers;
 
   const votes = isReveal
