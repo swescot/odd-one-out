@@ -32,8 +32,8 @@ export function Home({ onStart }: HomeProps) {
       <header className="brand">
         <h1>Odd One Out</h1>
         <p className="tagline">
-          Everyone answers the same question — except one player, who's just
-          guessing. Can you spot the odd one out?
+          Everyone answers the same question, except one. Can you spot the odd
+          one out?
         </p>
       </header>
 
