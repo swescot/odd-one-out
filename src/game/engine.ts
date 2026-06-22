@@ -261,13 +261,16 @@ export function viewFor(state: GameState, recipientId: PlayerId): ClientGameStat
   const recipientIsOdd = state.round.oddOneOutId === recipientId;
 
   // Keep `syntax` in every view — all players need it to validate their input.
-  // Only the question (hidden from the OOO) and the OOO prompt (hidden from
-  // everyone else) are stripped before reveal.
-  const card: QuestionCard = isReveal
-    ? state.round.card
-    : recipientIsOdd
-      ? { ...state.round.card, question: "" }
-      : { ...state.round.card, oooPrompt: "" };
+  // The real question is hidden from the odd one out only while answering (so
+  // they answer blind); from the discussion step on, they see it like everyone
+  // else. The OOO prompt stays hidden from everyone else until reveal.
+  const hideQuestion = state.phase === "answering" && recipientIsOdd;
+  const hidePrompt = !isReveal && !recipientIsOdd;
+  const card: QuestionCard = {
+    ...state.round.card,
+    question: hideQuestion ? "" : state.round.card.question,
+    oooPrompt: hidePrompt ? "" : state.round.card.oooPrompt,
+  };
 
   // During answering, keep every answer entry (so clients can show accurate
   // "X/Y submitted" progress) but blank out other players' text, since answers

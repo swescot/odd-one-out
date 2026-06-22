@@ -135,23 +135,15 @@ export function Answering({ game, state }: PhaseProps) {
 
 export function Discussion({ game, state }: PhaseProps) {
   const round = state.round!;
-  const iAmOdd = round.oddOneOutId === game.myId;
   const [confirming, setConfirming] = useState(false);
   return (
     <div className="screen phase">
       <div className="round-tag">Round {round.number} · Discuss</div>
 
-      {iAmOdd ? (
-        <div className="prompt odd">
-          <span className="prompt-label">You're the odd one out 🤫</span>
-          <p className="prompt-text">{round.card.oooPrompt}</p>
-        </div>
-      ) : (
-        <div className="prompt">
-          <span className="prompt-label">Question</span>
-          <p className="prompt-text">{round.card.question}</p>
-        </div>
-      )}
+      <div className="prompt">
+        <span className="prompt-label">Question</span>
+        <p className="prompt-text">{round.card.question}</p>
+      </div>
 
       <span className="section-label">Everyone's answers</span>
       <ul className="answers">
