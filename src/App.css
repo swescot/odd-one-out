@@ -249,6 +249,12 @@ input:focus {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+.section-label {
+  font-size: 13px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .prompt {
   background: var(--surface);
   border: 1px solid var(--border);
