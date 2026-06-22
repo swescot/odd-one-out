@@ -10,6 +10,11 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 - [ ] **Imposter Mode** — second game mode (category + secret word, "Designated
       Witness" first speaker, no text input). Design in
       [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md).
+- [ ] **UI revamp** — restyle the app from reference images (visual design to
+      be provided): buttons, lists, cards, screens.
+- [ ] **Scoring revamp** — richer scoring with multipliers etc. (design TBD).
+      The game is already finite (`DEFAULT_TOTAL_ROUNDS` → `gameOver` end
+      screen); revisit round count / end state here and make it configurable.
 
 ## Polish
 
@@ -18,7 +23,10 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 - [ ] "Play again with the same players" from the game-over screen.
 - [ ] Graceful handling if the **host** leaves mid-game.
 - [ ] Sound / haptics on key moments (reveal, your turn, timer running out).
-- [ ] UI restyling from reference images (buttons, lists, etc.).
+- [ ] **Invite link** when hosting — put the code in a URL param (e.g.
+      `?code=H32L`) so joiners land pre-filled; share it as a link.
+- [ ] **Add tracking** — analytics (clarify scope: usage/funnel analytics vs
+      error tracking) and pick a tool.
 
 ## Ideas / maybe
 
