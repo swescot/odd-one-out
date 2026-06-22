@@ -18,13 +18,15 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 
 ## Polish
 
-- [ ] Copy-code-to-clipboard button in the lobby.
 - [ ] Expand the question deck (only 10 cards today, in `src/game/questions.ts`).
 - [ ] "Play again with the same players" from the game-over screen.
 - [ ] Graceful handling if the **host** leaves mid-game.
 - [ ] Sound / haptics on key moments (reveal, your turn, timer running out).
-- [ ] **Invite link** when hosting — put the code in a URL param (e.g.
-      `?code=H32L`) so joiners land pre-filled; share it as a link.
+- [ ] **Copy invite link** when hosting — a button that copies a shareable
+      link with the code as a URL param (e.g. `?code=H32L`), so joiners land
+      with the code pre-filled.
+- [ ] **Player avatars** — a set of animated avatars, randomly assigned to
+      players as they join.
 - [ ] **Add tracking** — analytics (clarify scope: usage/funnel analytics vs
       error tracking) and pick a tool.
 - [ ] **Localisation** — extract UI strings and translate; the question deck
