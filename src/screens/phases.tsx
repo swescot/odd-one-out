@@ -248,16 +248,6 @@ export function Reveal({ game, state }: PhaseProps) {
         <p className="prompt-text big">{oddName}</p>
       </div>
 
-      <h2>Everyone's answers</h2>
-      <ul className="answers">
-        {round.answers.map((a) => (
-          <li key={a.playerId} className={a.playerId === round.oddOneOutId ? "odd-answer" : ""}>
-            <span className="who">{nameOf(state, a.playerId)}</span>
-            <span className="what">{a.text}</span>
-          </li>
-        ))}
-      </ul>
-
       <h2>Votes</h2>
       {tally.length ? (
         <ul className="answers">

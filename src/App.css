@@ -350,12 +350,6 @@ input:focus {
   color: var(--accent);
 }
 
-/* ---------- reveal ---------- */
-.answers li.odd-answer {
-  border-color: var(--accent-border);
-  background: var(--accent-bg);
-}
-
 /* ---------- modal ---------- */
 .modal-overlay {
   position: fixed;
