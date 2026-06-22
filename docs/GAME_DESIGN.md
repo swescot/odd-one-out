@@ -35,36 +35,23 @@ All players are asked a subjective or bizarre question. One player—the Odd One
   * The reveal screen shows the **identity of the OOO**, **everyone's answers** (the OOO's highlighted), and a **tally of votes received** per player (players with no votes are omitted).
   * The running **scoreboard** is then shown on a separate screen before the next round.
 
-### 4. Data Architecture: The "Syntax Hint"
-To prevent game-breaking logic mismatches (e.g., answering "Banana" to a question about a year), every question is bound to a strictly enforced **Syntax Type**. *All* answers — everyone's, including the OOO's — must satisfy it, so the OOO's answer can never stand out by its *shape*; only its *content* can give them away.
+### 4. Data Architecture: Questions & OOO Prompts
+Every question is authored with a matching **OOO prompt** — the specific instruction the odd one out sees in place of the question. The prompt is tailored to that question rather than a bare type label like "a number" or "a word", so the OOO lands in the right ballpark and can blend in:
 
-Three syntax types are supported:
+| Question | OOO prompt |
+| --- | --- |
+| "How many 6-year-olds could you defeat in a fight?" | "Pick a number between 0 and 300" |
+| "What's a good food to eat while walking?" | "Pick a food" |
+| "What song or artist do you want to play at your funeral?" | "Pick a song or artist" |
+
+To additionally prevent game-breaking format mismatches (e.g. a word where everyone else gave a number), each question is bound to an enforced **Syntax Type** that every answer must satisfy — so the OOO's answer can never stand out by its *shape*, only its *content*:
 
 * **`integer { min, max }`** — a whole number within the range (hard-enforced).
 * **`word`** — a single word (letters only).
 * **`phrase { maxLen }`** — free short text up to a character limit.
 
-Each question pairs the Question (shown to normal players) with an OOO prompt (shown to the OOO) that yields an answer of the same syntax:
-
-    {
-      id: "fight-6yos",
-      question:  "How many 6-year-olds could you beat in a fight?",
-      oooPrompt: "Pick a whole number between 10 and 40.",
-      syntax:    { kind: "integer", min: 0, max: 100 },
-    }
-
-    {
-      id: "potluck",
-      question:  "What's the absolute worst item to bring to a neighbourhood potluck?",
-      oooPrompt: "Name an object you'd find in a standard office desk.",
-      syntax:    { kind: "phrase", maxLen: 40 },
-    }
-
-### 5. Scoring Math (The "Jackpot" Model)
-* **The Innocents:** Earn **+100 points** for successfully voting for the OOO.
-* **The Odd One Out:** Earns **+100 points** for *every single player* that votes for someone else.
-
-*Design Intent:* This creates a high-variance, non-linear scoring curve. If an OOO successfully causes total room fragmentation in an 8-player game, they net +700 points in a single turn, creating massive, celebratory "catch-up" moments.
+### 5. Scoring Math
+*TBD.*
 
 ---
 
