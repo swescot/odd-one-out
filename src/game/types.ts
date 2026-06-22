@@ -22,7 +22,8 @@ export type Phase =
   | "answering" // everyone writes an answer (odd one out only sees a hint)
   | "discussion" // answers revealed; players motivate them out loud
   | "voting" // everyone votes for who they think is the odd one out
-  | "reveal" // votes + odd one out + scoring shown
+  | "reveal" // odd one out + answers + vote tally shown
+  | "scoring" // round leaderboard shown
   | "gameOver";
 
 /**

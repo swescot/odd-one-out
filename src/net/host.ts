@@ -115,8 +115,17 @@ export class HostSession {
   private mutate(fn: (s: GameState) => GameState): void {
     this.state = fn(this.state);
     this.applyBots();
+    this.autoAdvance();
     this.emit();
     this.scheduleAdvance();
+  }
+
+  /** Progress phases that should advance on their own (not on a host click). */
+  private autoAdvance(): void {
+    // Answering ends as soon as everyone connected has submitted an answer.
+    if (this.state.phase === "answering" && engine.allAnswered(this.state)) {
+      this.state = engine.goToDiscussion(this.state, Date.now());
+    }
   }
 
   /**
@@ -190,6 +199,9 @@ export class HostSession {
   reveal(): void {
     this.mutate(engine.revealAndScore);
   }
+  goToScoring(): void {
+    this.mutate(engine.goToScoring);
+  }
   nextRound(): void {
     this.mutate((s) => engine.nextRound(s, Date.now()));
   }
@@ -226,6 +238,9 @@ export class HostSession {
         this.reveal();
         break;
       case "reveal":
+        this.goToScoring();
+        break;
+      case "scoring":
         this.nextRound();
         break;
     }

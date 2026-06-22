@@ -7,6 +7,7 @@ import {
   validateAnswer,
 } from "../game/engine";
 import { DEV_MODE } from "../devMode";
+import { ConfirmModal } from "./ConfirmModal";
 import type { GameApi } from "../net/useGame";
 
 function nameOf(state: ClientGameState, id: PlayerId): string {
@@ -128,18 +129,13 @@ export function Answering({ game, state }: PhaseProps) {
           </button>
         </>
       )}
-
-      {game.isHost && (
-        <button className="secondary" onClick={game.goToDiscussion}>
-          Reveal answers ({answeredCount}/{totalConnected})
-        </button>
-      )}
     </div>
   );
 }
 
 export function Discussion({ game, state }: PhaseProps) {
   const round = state.round!;
+  const [confirming, setConfirming] = useState(false);
   return (
     <div className="screen phase">
       <div className="round-tag">Round {round.number} · Discuss</div>
@@ -157,9 +153,21 @@ export function Discussion({ game, state }: PhaseProps) {
         ))}
       </ul>
       {game.isHost && (
-        <button className="primary" onClick={game.goToVoting}>
+        <button className="primary" onClick={() => setConfirming(true)}>
           Start voting
         </button>
+      )}
+      {confirming && (
+        <ConfirmModal
+          title="Start voting?"
+          message="Make sure everyone has had a chance to motivate their answer. This can't be undone."
+          confirmLabel="Start voting"
+          onConfirm={() => {
+            setConfirming(false);
+            game.goToVoting();
+          }}
+          onCancel={() => setConfirming(false)}
+        />
       )}
     </div>
   );
@@ -216,7 +224,14 @@ export function Voting({ game, state }: PhaseProps) {
 export function Reveal({ game, state }: PhaseProps) {
   const round = state.round!;
   const oddName = nameOf(state, round.oddOneOutId);
-  const last = state.roundsPlayed >= state.totalRounds;
+
+  // Tally votes received per accused player, busiest first, skipping anyone
+  // who got no votes.
+  const counts = new Map<PlayerId, number>();
+  for (const accusedId of Object.values(round.votes)) {
+    counts.set(accusedId, (counts.get(accusedId) ?? 0) + 1);
+  }
+  const tally = [...counts.entries()].sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="screen phase">
@@ -224,31 +239,50 @@ export function Reveal({ game, state }: PhaseProps) {
       <div className="prompt reveal">
         <span className="prompt-label">The odd one out was</span>
         <p className="prompt-text big">{oddName}</p>
-        <span className="hint">Their prompt: “{round.card.oooPrompt}”</span>
-        <span className="hint">Real question: “{round.card.question}”</span>
       </div>
 
-      <h2>Votes</h2>
+      <h2>Everyone's answers</h2>
       <ul className="answers">
-        {state.players
-          .filter((p) => p.id !== round.oddOneOutId)
-          .map((p) => {
-            const accused = round.votes[p.id];
-            const correct = accused === round.oddOneOutId;
-            return (
-              <li key={p.id}>
-                <span className="who">{p.name}</span>
-                <span className="what">
-                  {accused ? `accused ${nameOf(state, accused)}` : "didn't vote"}{" "}
-                  {accused && (correct ? "✅" : "❌")}
-                </span>
-              </li>
-            );
-          })}
+        {round.answers.map((a) => (
+          <li key={a.playerId} className={a.playerId === round.oddOneOutId ? "odd-answer" : ""}>
+            <span className="who">{nameOf(state, a.playerId)}</span>
+            <span className="what">{a.text}</span>
+          </li>
+        ))}
       </ul>
 
-      <Scores state={state} />
+      <h2>Votes</h2>
+      {tally.length ? (
+        <ul className="answers">
+          {tally.map(([id, n]) => (
+            <li key={id}>
+              <span className="who">{nameOf(state, id)}</span>
+              <span className="what">
+                {n} {n === 1 ? "vote" : "votes"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">No votes were cast.</p>
+      )}
 
+      {game.isHost && (
+        <button className="primary" onClick={game.goToScoring}>
+          Show scores
+        </button>
+      )}
+    </div>
+  );
+}
+
+export function Scoring({ game, state }: PhaseProps) {
+  const last = state.roundsPlayed >= state.totalRounds;
+  return (
+    <div className="screen phase">
+      <div className="round-tag">Round {state.round?.number} · Scores</div>
+      <h2>Scores</h2>
+      <Scores state={state} />
       {game.isHost && (
         <button className="primary" onClick={game.nextRound}>
           {last ? "See final scores" : "Next round"}

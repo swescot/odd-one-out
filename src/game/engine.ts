@@ -198,8 +198,14 @@ export function revealAndScore(state: GameState): GameState {
   };
 }
 
-export function nextRound(state: GameState, now: number): GameState {
+/** Move from the reveal screen to the round's scoring leaderboard. */
+export function goToScoring(state: GameState): GameState {
   if (state.phase !== "reveal") return state;
+  return { ...state, phase: "scoring" };
+}
+
+export function nextRound(state: GameState, now: number): GameState {
+  if (state.phase !== "scoring") return state;
   if (state.roundsPlayed >= state.totalRounds) {
     return { ...state, phase: "gameOver", round: null, phaseDeadline: null };
   }
@@ -219,7 +225,10 @@ export function nextRound(state: GameState, now: number): GameState {
 export function viewFor(state: GameState, recipientId: PlayerId): ClientGameState {
   if (!state.round) return state;
 
-  const isReveal = state.phase === "reveal" || state.phase === "gameOver";
+  const isReveal =
+    state.phase === "reveal" ||
+    state.phase === "scoring" ||
+    state.phase === "gameOver";
   const recipientIsOdd = state.round.oddOneOutId === recipientId;
 
   // Keep `syntax` in every view — all players need it to validate their input.

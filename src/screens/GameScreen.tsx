@@ -7,6 +7,7 @@ import {
   GameOver,
   Lobby,
   Reveal,
+  Scoring,
   Voting,
 } from "./phases";
 
@@ -109,6 +110,8 @@ function renderPhase(
       return <Voting game={game} state={state} />;
     case "reveal":
       return <Reveal game={game} state={state} />;
+    case "scoring":
+      return <Scoring game={game} state={state} />;
     case "gameOver":
       return <GameOver game={game} state={state} onLeave={onLeave} />;
     default:
