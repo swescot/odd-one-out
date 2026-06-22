@@ -194,6 +194,8 @@ export function Voting({ game, state }: PhaseProps) {
   }
 
   const candidates = state.players.filter((p) => p.id !== game.myId);
+  const answerOf = (id: PlayerId) =>
+    round.answers.find((a) => a.playerId === id)?.text ?? "";
 
   return (
     <div className="screen phase">
@@ -206,8 +208,8 @@ export function Voting({ game, state }: PhaseProps) {
               className={`vote ${myVote === p.id ? "chosen" : ""}`}
               onClick={() => game.submitVote(p.id)}
             >
-              {p.name}
-              {myVote === p.id && <span className="check">✓</span>}
+              <span className="who">{p.name}</span>
+              <span className="what">{answerOf(p.id)}</span>
             </button>
           </li>
         ))}

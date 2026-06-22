@@ -337,6 +337,15 @@ input:focus {
   border-color: var(--accent);
   background: var(--accent-bg);
 }
+.vote-list .vote .who {
+  color: var(--text);
+  font-size: 14px;
+}
+.vote-list .vote .what {
+  color: var(--text-h);
+  font-weight: 600;
+  text-align: right;
+}
 .check {
   color: var(--accent);
 }
