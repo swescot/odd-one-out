@@ -79,7 +79,7 @@ export function Answering({ game, state }: PhaseProps) {
 
   return (
     <div className="screen phase">
-      <div className="round-tag">Round {round.number}</div>
+      <div className="round-tag">Round {round.number} · Answer</div>
 
       {iAmOdd ? (
         <div className="prompt">
@@ -182,7 +182,7 @@ export function Voting({ game, state }: PhaseProps) {
   if (iAmOdd) {
     return (
       <div className="screen phase">
-        <div className="round-tag">Round {round.number} · Voting</div>
+        <div className="round-tag">Round {round.number} · Vote</div>
         <div className="prompt odd">
           <span className="prompt-label">Lay low 😶</span>
           <p className="prompt-text">
@@ -197,7 +197,7 @@ export function Voting({ game, state }: PhaseProps) {
 
   return (
     <div className="screen phase">
-      <div className="round-tag">Round {round.number} · Voting</div>
+      <div className="round-tag">Round {round.number} · Vote</div>
       <h2>Who's the odd one out?</h2>
       <ul className="vote-list">
         {candidates.map((p) => (
