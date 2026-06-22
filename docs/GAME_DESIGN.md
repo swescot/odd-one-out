@@ -22,35 +22,43 @@ All players are asked a subjective or bizarre question. One player—the Odd One
   * The OOO sees a specific constraint prompt (e.g., *"Enter a 2-digit number that feels slightly too high"*).
   * All players submit their text strings.
 
-* **Step 2: The List Reveal (30 Seconds)**
-  * The UI displays a consolidated list of all submitted answers, **each attributed to the player who wrote it** (e.g., `Sam: 4 · Alex: 12 · Jordan: 45`).
-  * The original **question is revealed at the top of this screen** — including to the OOO, who is seeing it for the first time (they answered knowing only their prompt).
+* **Step 2: The Discussion (30 seconds + 30 seconds per player)**
+  * This single phase merges the reveal and the open floor. The UI displays the **original question** at the top — including to the OOO, who is seeing it for the first time (they answered knowing only their prompt) — followed by a consolidated list of all submitted answers, **each attributed to the player who wrote it** (e.g., `Sam: 4 · Alex: 12 · Jordan: 45`).
+  * Players take turns verbally claiming their answers and motivating their logic.
+  * The OOO now knows the real question, but their answer was made blind from a prompt. Their job is to **sell that answer as a genuine, deliberate response to the question** — convincing the table they were in on it all along — while **steering suspicion onto an innocent player**.
   * *UX Note:* Answers are shown with names attached. Knowing who wrote what up front lets the table start interrogating specific players immediately rather than reacting to anonymous data.
 
-* **Step 3: The Open Floor (2–4 Minutes)**
-  * The round timer begins. Players must verbally claim their answers and motivate their logic.
-  * The OOO now knows the real question, but their answer was made blind from a prompt. Their job is to **sell that answer as a genuine, deliberate response to the question** — convincing the table they were in on it all along — while **steering suspicion onto an innocent player**.
+* **Step 3: The Vote (45 Seconds)**
+  * Every player **except the OOO** casts a private vote on their personal device for the suspected imposter. The OOO does not vote — they sit out and hope they blended in.
 
-* **Step 4: The Vote**
-  * The timer expires. All players (including the OOO) cast a private vote on their personal device for the suspected imposter.
-  * *The Framing Vote:* The OOO's vote carries standard mathematical weight. If the OOO successfully shifts the room's paranoia onto an innocent player, their own vote can act as the final nail in that innocent player's coffin.
-
-* **Step 5: The Resolution**
-  * The UI reveals the true question, the identity of the OOO, and the vote breakdown.
-  * Points are distributed.
+* **Step 4: The Resolution**
+  * The reveal screen shows the **identity of the OOO**, **everyone's answers** (the OOO's highlighted), and a **tally of votes received** per player (players with no votes are omitted).
+  * The running **scoreboard** is then shown on a separate screen before the next round.
 
 ### 4. Data Architecture: The "Syntax Hint"
-To prevent game-breaking logic mismatches (e.g., answering "Banana" to a question about a year), every question in the Classic database must be bound to a strictly enforced **Syntax Type**:
+To prevent game-breaking logic mismatches (e.g., answering "Banana" to a question about a year), every question is bound to a strictly enforced **Syntax Type**. *All* answers — everyone's, including the OOO's — must satisfy it, so the OOO's answer can never stand out by its *shape*; only its *content* can give them away.
 
-    [Database Entry #104]
-    Question:    "How many 6-year-olds could you beat in a fight?"
-    Syntax_Type: "Integer (0-100)"
-    OOO_Prompt:  "Pick a number between 10 and 40."
+Three syntax types are supported:
 
-    [Database Entry #212]
-    Question:    "What is the absolute worst item to bring to a neighborhood potluck?"
-    Syntax_Type: "Singular Noun (Inanimate)"
-    OOO_Prompt:  "Name an object you would find in a standard office desk."
+* **`integer { min, max }`** — a whole number within the range (hard-enforced).
+* **`word`** — a single word (letters only).
+* **`phrase { maxLen }`** — free short text up to a character limit.
+
+Each question pairs the Question (shown to normal players) with an OOO prompt (shown to the OOO) that yields an answer of the same syntax:
+
+    {
+      id: "fight-6yos",
+      question:  "How many 6-year-olds could you beat in a fight?",
+      oooPrompt: "Pick a whole number between 10 and 40.",
+      syntax:    { kind: "integer", min: 0, max: 100 },
+    }
+
+    {
+      id: "potluck",
+      question:  "What's the absolute worst item to bring to a neighbourhood potluck?",
+      oooPrompt: "Name an object you'd find in a standard office desk.",
+      syntax:    { kind: "phrase", maxLen: 40 },
+    }
 
 ### 5. Scoring Math (The "Jackpot" Model)
 * **The Innocents:** Earn **+100 points** for successfully voting for the OOO.

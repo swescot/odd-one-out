@@ -12,12 +12,16 @@ import { QUESTIONS } from "./questions";
 export const MIN_PLAYERS = 3;
 export const DEFAULT_TOTAL_ROUNDS = 5;
 
-/** How long each timed phase lasts, in seconds (see GAME_DESIGN.md). */
+/** How long the fixed-length timed phases last, in seconds (see GAME_DESIGN.md). */
 export const DURATIONS = {
   answering: 60, // Input Phase
-  discussion: 180, // List Reveal + Open Floor (2–4 min, 3 min default)
   voting: 45, // The Vote
 } as const;
+
+/** Discussion scales with the table: 30s base + 30s per player. */
+export function discussionSeconds(state: GameState): number {
+  return 30 + 30 * state.players.length;
+}
 
 /** Points awarded per correct guess / per fooled player ("Jackpot" model). */
 export const POINTS = 100;
@@ -130,7 +134,7 @@ export function goToDiscussion(state: GameState, now: number): GameState {
   return {
     ...state,
     phase: "discussion",
-    phaseDeadline: deadline(now, DURATIONS.discussion),
+    phaseDeadline: deadline(now, discussionSeconds(state)),
   };
 }
 
@@ -226,7 +230,7 @@ export function devGoToPhase(
     phase === "answering"
       ? DURATIONS.answering
       : phase === "discussion"
-        ? DURATIONS.discussion
+        ? discussionSeconds(state)
         : phase === "voting"
           ? DURATIONS.voting
           : null;
