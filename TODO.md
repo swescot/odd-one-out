@@ -27,6 +27,8 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
       `?code=H32L`) so joiners land pre-filled; share it as a link.
 - [ ] **Add tracking** — analytics (clarify scope: usage/funnel analytics vs
       error tracking) and pick a tool.
+- [ ] **Localisation** — extract UI strings and translate; the question deck
+      will need per-language content too.
 
 ## Ideas / maybe
 
