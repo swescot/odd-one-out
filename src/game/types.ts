@@ -60,6 +60,8 @@ export interface Round {
   answers: Answer[];
   /** voterId -> the player they accused of being the odd one out. */
   votes: Record<PlayerId, PlayerId>;
+  /** Whether this round's scores have been applied (keeps reveal idempotent). */
+  scored: boolean;
 }
 
 export interface GameState {

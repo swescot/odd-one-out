@@ -29,6 +29,27 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
   const game = useGame(mode, code, name);
   const { state, status, statusDetail } = game;
 
+  // Dev-only: ←/→ step the host back/forth through phases. Ignored while
+  // typing in a field so arrow keys still move the text cursor.
+  useEffect(() => {
+    if (!DEV_MODE || !game.isHost) return;
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        game.skipPhase();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        game.stepBack();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // game.* call through a stable host ref, so binding once is fine.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const showBanner = status !== "ready" && status !== "connected";
 
   return (

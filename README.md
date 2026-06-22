@@ -62,7 +62,9 @@ You need at least **3 players** to start a round.
 
 A hidden developer mode adds tools for testing the multiplayer game on a single
 device. As the **host**, it lets you add simulated bot players (which auto-answer
-and auto-vote) and a "Skip" button to jump past round timers.
+and auto-vote) and step through phases manually — a "Skip" button or the **←/→
+arrow keys** to move back and forth. In dev mode phases never auto-advance (the
+timer keeps counting but won't move on by itself).
 
 It is off by default and toggled with a URL flag, so it works on any build
 (including a deployed one) without being noticeable to players:

@@ -3,11 +3,22 @@ import type { DataConnection } from "peerjs";
 import type {
   ClientGameState,
   GameState,
+  Phase,
   PlayerId,
   SyntaxType,
 } from "../game/types";
 import * as engine from "../game/engine";
+import { DEV_MODE } from "../devMode";
 import { peerIdForCode, type ClientMessage } from "./protocol";
+
+/** Dev step-back targets: where the left arrow takes you from each phase. */
+const PREV_PHASE: Partial<Record<Phase, Phase>> = {
+  discussion: "answering",
+  voting: "discussion",
+  reveal: "voting",
+  scoring: "reveal",
+  gameOver: "scoring",
+};
 
 export type HostStatus = "starting" | "ready" | "error";
 
@@ -122,6 +133,8 @@ export class HostSession {
 
   /** Progress phases that should advance on their own (not on a host click). */
   private autoAdvance(): void {
+    // In dev mode the host drives every transition manually (skip / arrows).
+    if (DEV_MODE) return;
     // Answering ends as soon as everyone connected has submitted an answer.
     if (this.state.phase === "answering" && engine.allAnswered(this.state)) {
       this.state = engine.goToDiscussion(this.state, Date.now());
@@ -159,6 +172,8 @@ export class HostSession {
       clearTimeout(this.advanceTimer);
       this.advanceTimer = null;
     }
+    // In dev mode the timer still counts down but never advances on its own.
+    if (DEV_MODE) return;
     const dl = this.state.phaseDeadline;
     if (dl == null) return;
     const phase = this.state.phase;
@@ -244,6 +259,12 @@ export class HostSession {
         this.nextRound();
         break;
     }
+  }
+
+  /** Step back to the previous phase (no score/round changes). */
+  stepBack(): void {
+    const prev = PREV_PHASE[this.state.phase];
+    if (prev) this.mutate((s) => engine.devGoToPhase(s, prev, Date.now()));
   }
 
   destroy(): void {

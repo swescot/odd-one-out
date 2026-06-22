@@ -1,6 +1,7 @@
 import type {
   ClientGameState,
   GameState,
+  Phase,
   Player,
   PlayerId,
   QuestionCard,
@@ -96,6 +97,7 @@ function startRound(
       oddOneOutId: oddOneOut.id,
       answers: [],
       votes: {},
+      scored: false,
     },
   };
 }
@@ -172,6 +174,12 @@ export function allVoted(state: GameState): boolean {
  */
 export function revealAndScore(state: GameState): GameState {
   if (!state.round || state.phase !== "voting") return state;
+
+  // Already scored (e.g. re-revealed after stepping back in dev): just show it.
+  if (state.round.scored) {
+    return { ...state, phase: "reveal", phaseDeadline: null };
+  }
+
   const { oddOneOutId, votes } = state.round;
 
   const detectives = state.players.filter((p) => p.id !== oddOneOutId);
@@ -191,6 +199,7 @@ export function revealAndScore(state: GameState): GameState {
     phase: "reveal",
     phaseDeadline: null,
     roundsPlayed: state.roundsPlayed + 1,
+    round: { ...state.round, scored: true },
     players: state.players.map((p) => ({
       ...p,
       score: p.score + (gained[p.id] ?? 0),
@@ -202,6 +211,26 @@ export function revealAndScore(state: GameState): GameState {
 export function goToScoring(state: GameState): GameState {
   if (state.phase !== "reveal") return state;
   return { ...state, phase: "scoring" };
+}
+
+/**
+ * Dev-only: jump straight to a phase without running its transition logic
+ * (no scoring, no new round). Used for stepping back and forth while testing.
+ */
+export function devGoToPhase(
+  state: GameState,
+  phase: Phase,
+  now: number,
+): GameState {
+  const secs =
+    phase === "answering"
+      ? DURATIONS.answering
+      : phase === "discussion"
+        ? DURATIONS.discussion
+        : phase === "voting"
+          ? DURATIONS.voting
+          : null;
+  return { ...state, phase, phaseDeadline: secs ? deadline(now, secs) : null };
 }
 
 export function nextRound(state: GameState, now: number): GameState {
