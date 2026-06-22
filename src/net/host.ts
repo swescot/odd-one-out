@@ -217,6 +217,9 @@ export class HostSession {
   goToScoring(): void {
     this.mutate(engine.goToScoring);
   }
+  finishGame(): void {
+    this.mutate(engine.finishGame);
+  }
   nextRound(): void {
     this.mutate((s) => engine.nextRound(s, Date.now()));
   }
@@ -253,7 +256,8 @@ export class HostSession {
         this.reveal();
         break;
       case "reveal":
-        this.goToScoring();
+        if (engine.isFinalRound(this.state)) this.finishGame();
+        else this.goToScoring();
         break;
       case "scoring":
         this.nextRound();

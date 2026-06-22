@@ -217,6 +217,17 @@ export function goToScoring(state: GameState): GameState {
   return { ...state, phase: "scoring" };
 }
 
+/** Whether the last round has just been played. */
+export function isFinalRound(state: GameState): boolean {
+  return state.roundsPlayed >= state.totalRounds;
+}
+
+/** On the final round, skip the per-round scoreboard: reveal → game over. */
+export function finishGame(state: GameState): GameState {
+  if (state.phase !== "reveal") return state;
+  return { ...state, phase: "gameOver", round: null, phaseDeadline: null };
+}
+
 /**
  * Dev-only: jump straight to a phase without running its transition logic
  * (no scoring, no new round). Used for stepping back and forth while testing.

@@ -231,6 +231,7 @@ export function Voting({ game, state }: PhaseProps) {
 export function Reveal({ game, state }: PhaseProps) {
   const round = state.round!;
   const oddName = nameOf(state, round.oddOneOutId);
+  const last = state.roundsPlayed >= state.totalRounds;
 
   // Tally votes received per accused player, busiest first, skipping anyone
   // who got no votes.
@@ -265,8 +266,11 @@ export function Reveal({ game, state }: PhaseProps) {
       )}
 
       {game.isHost && (
-        <button className="primary" onClick={game.goToScoring}>
-          Show scores
+        <button
+          className="primary"
+          onClick={last ? game.finishGame : game.goToScoring}
+        >
+          {last ? "See final scores" : "Show scores"}
         </button>
       )}
     </div>

@@ -25,6 +25,7 @@ export interface GameApi {
   goToVoting: () => void;
   reveal: () => void;
   goToScoring: () => void;
+  finishGame: () => void;
   nextRound: () => void;
   // Available to every player.
   submitAnswer: (text: string) => void;
@@ -105,6 +106,7 @@ export function useGame(
     goToVoting: () => host()?.goToVoting(),
     reveal: () => host()?.reveal(),
     goToScoring: () => host()?.goToScoring(),
+    finishGame: () => host()?.finishGame(),
     nextRound: () => host()?.nextRound(),
     submitAnswer: (text) =>
       mode === "host" ? host()?.submitAnswer(text) : client()?.submitAnswer(text),
