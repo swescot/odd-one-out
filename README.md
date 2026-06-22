@@ -30,7 +30,7 @@ introduces peers to each other — no game data flows through it.
   stall if the host's screen sleeps.
 
 See [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md) for the full game design,
-including the planned Imposter mode.
+including the planned Imposter mode, and [TODO.md](TODO.md) for the backlog.
 
 ## Tech stack
 
