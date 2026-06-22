@@ -24,11 +24,12 @@ All players are asked a subjective or bizarre question. One player—the Odd One
 
 * **Step 2: The List Reveal (30 Seconds)**
   * The UI displays a consolidated list of all submitted answers, **each attributed to the player who wrote it** (e.g., `Sam: 4 · Alex: 12 · Jordan: 45`).
+  * The original **question is revealed at the top of this screen** — including to the OOO, who is seeing it for the first time (they answered knowing only their prompt).
   * *UX Note:* Answers are shown with names attached. Knowing who wrote what up front lets the table start interrogating specific players immediately rather than reacting to anonymous data.
 
 * **Step 3: The Open Floor (2–4 Minutes)**
   * The round timer begins. Players must verbally claim their answers and motivate their logic.
-  * The OOO must listen to the surrounding justifications, reverse-engineer what the prompt likely was, and invent a post-hoc rationalization for the random string they submitted.
+  * The OOO now knows the real question, but their answer was made blind from a prompt. Their job is to **sell that answer as a genuine, deliberate response to the question** — convincing the table they were in on it all along — while **steering suspicion onto an innocent player**.
 
 * **Step 4: The Vote**
   * The timer expires. All players (including the OOO) cast a private vote on their personal device for the suspected imposter.
