@@ -82,8 +82,8 @@ export function Answering({ game, state }: PhaseProps) {
       <div className="round-tag">Round {round.number}</div>
 
       {iAmOdd ? (
-        <div className="prompt odd">
-          <span className="prompt-label">You're the odd one out 🤫</span>
+        <div className="prompt">
+          <span className="prompt-label">You're the odd one out</span>
           <p className="prompt-text">{round.card.oooPrompt}</p>
           <span className="hint">
             Everyone else has a real question. Give an answer that fits this and
@@ -109,11 +109,10 @@ export function Answering({ game, state }: PhaseProps) {
       ) : (
         <>
           <label className="field">
-            <span>Your answer · {describeSyntax(syntax)}</span>
             <input
               value={draft}
               onChange={(e) => setDraft(e.target.value)}
-              placeholder="Type your answer"
+              placeholder={describeSyntax(syntax)}
               maxLength={hints.maxLength}
               inputMode={hints.inputMode}
               autoFocus
