@@ -200,6 +200,10 @@ export function Voting({ game, state }: PhaseProps) {
   return (
     <div className="screen phase">
       <div className="round-tag">Round {round.number} · Vote</div>
+      <div className="prompt">
+        <span className="prompt-label">Question</span>
+        <p className="prompt-text">{round.card.question}</p>
+      </div>
       <h2>Who's the odd one out?</h2>
       <ul className="vote-list">
         {candidates.map((p) => (
