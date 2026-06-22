@@ -36,6 +36,15 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
           ← Leave
         </button>
         <div className="topbar-right">
+          {import.meta.env.DEV &&
+            game.isHost &&
+            state &&
+            state.phase !== "lobby" &&
+            state.phase !== "gameOver" && (
+              <button className="skip" onClick={game.skipPhase}>
+                Skip ▸
+              </button>
+            )}
           <PhaseTimer deadline={state?.phaseDeadline ?? null} />
           <span className="topbar-code">{code}</span>
           {game.isHost && <span className="tag">hosting</span>}

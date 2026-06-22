@@ -28,6 +28,9 @@ export interface GameApi {
   // Available to every player.
   submitAnswer: (text: string) => void;
   submitVote: (accusedId: PlayerId) => void;
+  // Dev-only (no-ops on a client); UI is gated behind import.meta.env.DEV.
+  addBot: () => void;
+  skipPhase: () => void;
 }
 
 /**
@@ -106,5 +109,7 @@ export function useGame(
       mode === "host"
         ? host()?.submitVote(accusedId)
         : client()?.submitVote(accusedId),
+    addBot: () => host()?.addBot(),
+    skipPhase: () => host()?.skipPhase(),
   };
 }

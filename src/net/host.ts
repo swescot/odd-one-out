@@ -1,6 +1,11 @@
 import Peer from "peerjs";
 import type { DataConnection } from "peerjs";
-import type { ClientGameState, GameState, PlayerId } from "../game/types";
+import type {
+  ClientGameState,
+  GameState,
+  PlayerId,
+  SyntaxType,
+} from "../game/types";
 import * as engine from "../game/engine";
 import { peerIdForCode, type ClientMessage } from "./protocol";
 
@@ -27,6 +32,8 @@ export class HostSession {
   private destroyed = false;
   /** Fires when the current timed phase should auto-advance. */
   private advanceTimer: ReturnType<typeof setTimeout> | null = null;
+  /** Dev-only simulated players (no real connection); auto-play each phase. */
+  private botIds = new Set<PlayerId>();
 
   constructor(code: string, hostId: PlayerId, hostName: string, cb: HostCallbacks) {
     this.code = code;
@@ -107,8 +114,34 @@ export class HostSession {
   /** Apply a pure engine transition, then push fresh views to everyone. */
   private mutate(fn: (s: GameState) => GameState): void {
     this.state = fn(this.state);
+    this.applyBots();
     this.emit();
     this.scheduleAdvance();
+  }
+
+  /**
+   * Dev-only: let any bot that hasn't acted yet take its turn. Runs against the
+   * pure engine (not the public methods) so it can't re-enter mutate(); the
+   * caller emits once afterwards.
+   */
+  private applyBots(): void {
+    if (this.botIds.size === 0 || !this.state.round) return;
+    let s = this.state;
+    if (s.phase === "answering") {
+      for (const id of this.botIds) {
+        if (!s.round!.answers.some((a) => a.playerId === id)) {
+          s = engine.submitAnswer(s, id, botAnswer(s.round!.card.syntax));
+        }
+      }
+    } else if (s.phase === "voting") {
+      for (const id of this.botIds) {
+        if (id === s.round!.oddOneOutId || id in s.round!.votes) continue;
+        const others = s.players.filter((p) => p.id !== id);
+        const target = others[Math.floor(Math.random() * others.length)];
+        s = engine.submitVote(s, id, target.id);
+      }
+    }
+    this.state = s;
   }
 
   /** (Re)arm the auto-advance timer for the current timed phase, if any. */
@@ -169,10 +202,54 @@ export class HostSession {
     this.mutate((s) => engine.submitVote(s, this.hostId, accusedId));
   }
 
+  // --- Dev-only helpers (UI gated behind import.meta.env.DEV) ---
+
+  /** Add a simulated player that auto-answers and auto-votes. */
+  addBot(): void {
+    const taken = new Set(this.state.players.map((p) => p.name));
+    const name = BOT_NAMES.find((n) => !taken.has(n)) ?? `Bot ${this.botIds.size + 1}`;
+    const id = `bot_${this.botIds.size}_${name}`;
+    this.botIds.add(id);
+    this.mutate((s) => engine.addOrReconnectPlayer(s, id, name));
+  }
+
+  /** Jump straight to the next phase, bypassing the timer. */
+  skipPhase(): void {
+    switch (this.state.phase) {
+      case "answering":
+        this.goToDiscussion();
+        break;
+      case "discussion":
+        this.goToVoting();
+        break;
+      case "voting":
+        this.reveal();
+        break;
+      case "reveal":
+        this.nextRound();
+        break;
+    }
+  }
+
   destroy(): void {
     this.destroyed = true;
     if (this.advanceTimer) clearTimeout(this.advanceTimer);
     this.peer?.destroy();
     this.conns.clear();
+  }
+}
+
+const BOT_NAMES = ["Bea", "Cy", "Di", "Ed", "Fi", "Gus", "Hal", "Ivy", "Jo"];
+const BOT_WORDS = ["otter", "ladder", "mango", "cactus", "banjo", "pickle"];
+const BOT_PHRASES = ["a banana", "loud socks", "wet cardboard", "jazz", "a spare tyre"];
+
+function botAnswer(s: SyntaxType): string {
+  switch (s.kind) {
+    case "integer":
+      return String(s.min + Math.floor(Math.random() * (s.max - s.min + 1)));
+    case "word":
+      return BOT_WORDS[Math.floor(Math.random() * BOT_WORDS.length)];
+    case "phrase":
+      return BOT_PHRASES[Math.floor(Math.random() * BOT_PHRASES.length)];
   }
 }

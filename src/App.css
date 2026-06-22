@@ -126,6 +126,14 @@ input:focus {
   letter-spacing: 2px;
   color: var(--text-h);
 }
+.skip {
+  font-size: 13px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px dashed var(--accent-border);
+  color: var(--accent);
+}
 .timer {
   font-family: var(--mono);
   font-size: 15px;

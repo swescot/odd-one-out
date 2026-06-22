@@ -49,6 +49,11 @@ export function Lobby({ game, state }: PhaseProps) {
           {!enough && (
             <p className="muted">Need at least {MIN_PLAYERS} players to start.</p>
           )}
+          {import.meta.env.DEV && (
+            <button className="secondary" onClick={game.addBot}>
+              + Add bot (dev)
+            </button>
+          )}
         </>
       ) : (
         <p className="muted">Waiting for the host to start…</p>
