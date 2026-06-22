@@ -307,13 +307,17 @@ function Scores({ state }: { state: ClientGameState }) {
   const ranked = [...state.players].sort((a, b) => b.score - a.score);
   return (
     <ol className="scores">
-      {ranked.map((p, i) => (
-        <li key={p.id}>
-          <span className="rank">{i + 1}</span>
-          <span className="who">{p.name}</span>
-          <span className="pts">{p.score}</span>
-        </li>
-      ))}
+      {ranked.map((p) => {
+        // Shared rank for ties: rank = 1 + players with a strictly higher score.
+        const rank = ranked.findIndex((q) => q.score === p.score) + 1;
+        return (
+          <li key={p.id}>
+            <span className="rank">{rank}</span>
+            <span className="who">{p.name}</span>
+            <span className="pts">{p.score}</span>
+          </li>
+        );
+      })}
     </ol>
   );
 }
