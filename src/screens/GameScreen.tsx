@@ -88,7 +88,7 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
           </p>
         </div>
       ) : (
-        renderPhase(game.state!.phase, game, onLeave)
+        renderPhase(game.state!.phase, game)
       )}
     </div>
   );
@@ -114,11 +114,7 @@ function PhaseTimer({ deadline }: { deadline: number | null }) {
   );
 }
 
-function renderPhase(
-  phase: string,
-  game: ReturnType<typeof useGame>,
-  onLeave: () => void,
-) {
+function renderPhase(phase: string, game: ReturnType<typeof useGame>) {
   const state = game.state!;
   switch (phase) {
     case "lobby":
@@ -134,7 +130,7 @@ function renderPhase(
     case "scoring":
       return <Scoring game={game} state={state} />;
     case "gameOver":
-      return <GameOver game={game} state={state} onLeave={onLeave} />;
+      return <GameOver game={game} state={state} />;
     default:
       return null;
   }

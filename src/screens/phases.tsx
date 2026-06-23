@@ -292,15 +292,17 @@ export function Scoring({ game, state }: PhaseProps) {
   );
 }
 
-export function GameOver({ game, state, onLeave }: PhaseProps & { onLeave: () => void }) {
+export function GameOver({ game, state }: PhaseProps) {
   return (
     <div className="screen phase">
       <h1>Final scores</h1>
       <Scores state={state} />
-      {game.isHost && (
-        <button className="primary" onClick={onLeave}>
-          New game
+      {game.isHost ? (
+        <button className="primary" onClick={game.returnToLobby}>
+          Play again
         </button>
+      ) : (
+        <p className="muted">Waiting for the host to start a new game…</p>
       )}
     </div>
   );

@@ -114,7 +114,23 @@ function startRound(state: GameState, now: number): GameState {
 
 export function startGame(state: GameState, now: number): GameState {
   if (state.players.length < MIN_PLAYERS) return state;
-  return startRound({ ...state, roundsPlayed: 0, usedQuestionIds: [] }, now);
+  // Keep usedQuestionIds: questions don't repeat across games in the same
+  // lobby until the whole deck has been cycled through.
+  return startRound({ ...state, roundsPlayed: 0 }, now);
+}
+
+/** Return a finished game to its lobby, keeping players and the used-question
+ * history but resetting scores. */
+export function returnToLobby(state: GameState): GameState {
+  if (state.phase === "lobby") return state;
+  return {
+    ...state,
+    phase: "lobby",
+    round: null,
+    phaseDeadline: null,
+    roundsPlayed: 0,
+    players: state.players.map((p) => ({ ...p, score: 0 })),
+  };
 }
 
 export function submitAnswer(

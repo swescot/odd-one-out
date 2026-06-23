@@ -223,6 +223,9 @@ export class HostSession {
   nextRound(): void {
     this.mutate((s) => engine.nextRound(s, Date.now()));
   }
+  returnToLobby(): void {
+    this.mutate(engine.returnToLobby);
+  }
 
   // The host is also a player and can answer/vote on its own device.
   submitAnswer(text: string): void {
