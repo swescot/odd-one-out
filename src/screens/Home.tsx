@@ -6,10 +6,21 @@ interface HomeProps {
   onStart: (s: { mode: GameMode; code: string; name: string }) => void;
 }
 
+/** Invite code from the URL (`?code=ABCD`), so a shared link pre-fills join. */
+function inviteCode(): string {
+  try {
+    return (new URLSearchParams(window.location.search).get("code") ?? "")
+      .toUpperCase()
+      .trim();
+  } catch {
+    return "";
+  }
+}
+
 export function Home({ onStart }: HomeProps) {
   const [name, setName] = useState(getStoredName());
-  const [code, setCode] = useState("");
-  const [joining, setJoining] = useState(false);
+  const [code, setCode] = useState(inviteCode);
+  const [joining, setJoining] = useState(() => inviteCode().length > 0);
 
   const trimmedName = name.trim();
   const canCreate = trimmedName.length > 0;

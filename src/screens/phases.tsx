@@ -21,12 +21,29 @@ interface PhaseProps {
 
 export function Lobby({ game, state }: PhaseProps) {
   const enough = state.players.length >= MIN_PLAYERS;
+  const [copied, setCopied] = useState(false);
+
+  async function copyInviteLink() {
+    // Base URL (dropping any existing query like ?dev) + the join code.
+    const { origin, pathname } = window.location;
+    const link = `${origin}${pathname}?code=${state.code}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard unavailable (e.g. insecure context) — leave the code visible.
+    }
+  }
+
   return (
     <div className="screen phase">
       <div className="code-card">
         <span className="label">Game code</span>
         <span className="code">{state.code}</span>
-        <span className="hint">Share this so others can join</span>
+        <button className="copy-link" onClick={copyInviteLink}>
+          {copied ? "✓ Link copied" : "Copy invite link"}
+        </button>
       </div>
 
       <h2>

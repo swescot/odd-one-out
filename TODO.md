@@ -19,9 +19,6 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 - [ ] "Play again with the same players" from the game-over screen.
 - [ ] Graceful handling if the **host** leaves mid-game.
 - [ ] Sound / haptics on key moments (reveal, your turn, timer running out).
-- [ ] **Copy invite link** when hosting — a button that copies a shareable
-      link with the code as a URL param (e.g. `?code=H32L`), so joiners land
-      with the code pre-filled.
 - [ ] **Player avatars** — a set of animated avatars, randomly assigned to
       players as they join.
 - [ ] **Add tracking** — analytics (clarify scope: usage/funnel analytics vs
@@ -45,3 +42,4 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 - [x] Hidden dev mode behind `?dev` (simulated players + phase skip).
 - [x] Deployed to GitHub Pages, auto-deploying on push to `main`:
       https://swescot.github.io/odd-one-out/
+- [x] Copy invite link when hosting (`?code=XXXX`), pre-fills the join screen.

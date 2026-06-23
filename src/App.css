@@ -218,6 +218,16 @@ input:focus {
   color: var(--text-h);
   font-weight: 700;
 }
+.copy-link {
+  align-self: center;
+  margin-top: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-h);
+  font-size: 14px;
+  padding: 8px 14px;
+  border-radius: 10px;
+}
 .count {
   color: var(--accent);
 }
