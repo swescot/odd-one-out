@@ -11,8 +11,11 @@ export interface Player {
   name: string;
   /** Connected right now? Disconnected players keep their seat for reconnection. */
   connected: boolean;
-  /** Cumulative score across rounds. */
+  /** Cumulative score across rounds (never below 0). */
   score: number;
+  /** Consecutive rounds this player has correctly caught the odd one out.
+   * Unaffected by rounds where they were the odd one out. */
+  streak: number;
   /** True only for the device that created the game. */
   isHost: boolean;
 }

@@ -23,8 +23,22 @@ export function discussionSeconds(state: GameState): number {
   return 30 + 30 * state.players.length;
 }
 
-/** Points awarded per correct guess / per fooled player ("Jackpot" model). */
+// ---- Scoring (see GAME_DESIGN.md §5) ----
+/** Base points for catching the odd one out, and per player the OOO fools. */
 export const POINTS = 100;
+/** Added to the streak multiplier per consecutive correct catch (×1, ×1.5, …). */
+export const STREAK_STEP = 0.5;
+/** Multiplier for a correct voter when correct voters are a strict minority. */
+export const MINORITY_MULTIPLIER = 5;
+/** Multiplier for the OOO when only a minority voted for them (they evaded). */
+export const OOO_EVASION_MULTIPLIER = 2;
+/** Points a non-OOO player loses per vote received (suspicion penalty). */
+export const SUSPICION_PENALTY = 100;
+
+/** Streak multiplier given the consecutive-correct count *before* this catch. */
+function streakMultiplier(priorStreak: number): number {
+  return 1 + STREAK_STEP * priorStreak;
+}
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -68,6 +82,7 @@ export function addOrReconnectPlayer(
     name,
     connected: true,
     score: 0,
+    streak: 0,
     isHost,
   };
   return { ...state, players: [...state.players, player] };
@@ -129,7 +144,7 @@ export function returnToLobby(state: GameState): GameState {
     round: null,
     phaseDeadline: null,
     roundsPlayed: 0,
-    players: state.players.map((p) => ({ ...p, score: 0 })),
+    players: state.players.map((p) => ({ ...p, score: 0, streak: 0 })),
   };
 }
 
@@ -194,9 +209,12 @@ export function allVoted(state: GameState): boolean {
 }
 
 /**
- * Score the round and move to reveal (the "Jackpot" model, see GAME_DESIGN.md).
- * - Each innocent who correctly fingered the odd one out: +POINTS.
- * - The odd one out: +POINTS for every player they fooled (who voted wrong).
+ * Score the round and move to reveal (see GAME_DESIGN.md §5).
+ *
+ * Detectives: catching the OOO pays POINTS × streak × minority. Each vote you
+ * receive costs SUSPICION_PENALTY; receiving a majority of votes zeroes your
+ * round. The OOO earns POINTS per fooled voter, doubled if only a minority
+ * caught them. Cumulative scores never drop below 0.
  */
 export function revealAndScore(state: GameState): GameState {
   if (!state.round || state.phase !== "voting") return state;
@@ -208,17 +226,50 @@ export function revealAndScore(state: GameState): GameState {
 
   const { oddOneOutId, votes } = state.round;
 
-  const detectives = state.players.filter((p) => p.id !== oddOneOutId);
-  let foolCount = 0;
-  const gained: Record<PlayerId, number> = {};
-  for (const d of detectives) {
-    if (votes[d.id] === oddOneOutId) {
-      gained[d.id] = (gained[d.id] ?? 0) + POINTS;
-    } else {
-      foolCount += 1;
-    }
+  // Votes cast (the OOO doesn't vote), who was correct, and tallies received.
+  const voterIds = Object.keys(votes);
+  const totalVotes = voterIds.length;
+  const correctVotes = voterIds.filter((id) => votes[id] === oddOneOutId).length;
+  // A strict minority of voters caught the OOO → minority/evasion bonuses apply.
+  const minorityCaught = totalVotes > 0 && correctVotes * 2 < totalVotes;
+
+  const votesReceived: Record<PlayerId, number> = {};
+  for (const id of voterIds) {
+    const target = votes[id];
+    votesReceived[target] = (votesReceived[target] ?? 0) + 1;
   }
-  gained[oddOneOutId] = (gained[oddOneOutId] ?? 0) + foolCount * POINTS;
+
+  const players = state.players.map((p) => {
+    const received = votesReceived[p.id] ?? 0;
+
+    if (p.id === oddOneOutId) {
+      // OOO: paid per voter they fooled, ×2 if they evaded the majority.
+      const fooled = totalVotes - correctVotes;
+      const mult = minorityCaught ? OOO_EVASION_MULTIPLIER : 1;
+      const delta = POINTS * fooled * mult;
+      return { ...p, score: Math.max(0, p.score + delta) };
+    }
+
+    // Detective. Streak tracks correct catches regardless of points scored.
+    const caught = votes[p.id] === oddOneOutId;
+    const streak = caught ? p.streak + 1 : 0;
+    const majorityVoted = totalVotes > 0 && received * 2 > totalVotes;
+
+    let delta: number;
+    if (majorityVoted) {
+      // The table pegged them as the OOO → no points at all this round.
+      delta = 0;
+    } else {
+      const reward = caught
+        ? POINTS *
+          streakMultiplier(p.streak) *
+          (minorityCaught ? MINORITY_MULTIPLIER : 1)
+        : 0;
+      delta = reward - SUSPICION_PENALTY * received;
+    }
+
+    return { ...p, streak, score: Math.max(0, p.score + delta) };
+  });
 
   return {
     ...state,
@@ -226,10 +277,7 @@ export function revealAndScore(state: GameState): GameState {
     phaseDeadline: null,
     roundsPlayed: state.roundsPlayed + 1,
     round: { ...state.round, scored: true },
-    players: state.players.map((p) => ({
-      ...p,
-      score: p.score + (gained[p.id] ?? 0),
-    })),
+    players,
   };
 }
 

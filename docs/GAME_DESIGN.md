@@ -51,7 +51,21 @@ To additionally prevent game-breaking format mismatches (e.g. a word where every
 * **`phrase { maxLen }`** — free short text up to a character limit.
 
 ### 5. Scoring Math
-*TBD.*
+Designed to reward reading the room (not just guessing the obvious) and to punish drawing suspicion, so non-OOO play stays interesting. Base catch reward is **100 points**.
+
+**Detectives (everyone except the OOO):**
+
+* **Catch reward** — voting for the OOO pays `100 × streak × minority`:
+  * **Streak multiplier** — ×1, ×1.5, ×2, … (`1 + 0.5 × consecutive_prior_catches`) for each round in a row you catch the OOO. The streak is *not* broken by being the OOO for a round; it only resets when you vote and miss. Resets each new game.
+  * **Minority multiplier** — ×5 if the players who caught the OOO are a **strict minority** of the voters (i.e. most of the table was fooled). This rewards being right when everyone else is wrong.
+* **Suspicion penalty** — you lose **100 points for every vote you receive**. If you receive a **majority** of the votes cast, your round score is **0** regardless of anything else. This stops players from farming the minority multiplier by giving deliberately weird answers.
+
+**The Odd One Out:**
+
+* Earns **100 per voter they fooled** (anyone who voted for someone else).
+* **×2** if only a **minority** of voters caught them (they evaded the table).
+
+**General:** the two multipliers **stack** (a lone correct catch on a 3-round streak = `100 × 2 × 5 = 1000`). A single round can be a net loss, but **cumulative scores never drop below 0**.
 
 ---
 
