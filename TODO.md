@@ -4,6 +4,9 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 
 ## Next up
 
+- [ ] **Scoring revamp** — richer scoring with multipliers etc. (design TBD).
+      The game is already finite (`DEFAULT_TOTAL_ROUNDS` → `gameOver` end
+      screen); revisit round count / end state here and make it configurable.
 - [ ] **Deploy** to a static host (Vercel / Netlify / GitHub Pages). Pure
       static + P2P, so no backend needed — gives a real URL and removes the
       same-Wi-Fi + `npm run dev` requirement.
@@ -12,9 +15,6 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
       [docs/GAME_DESIGN.md](docs/GAME_DESIGN.md).
 - [ ] **UI revamp** — restyle the app from reference images (visual design to
       be provided): buttons, lists, cards, screens.
-- [ ] **Scoring revamp** — richer scoring with multipliers etc. (design TBD).
-      The game is already finite (`DEFAULT_TOTAL_ROUNDS` → `gameOver` end
-      screen); revisit round count / end state here and make it configurable.
 
 ## Polish
 
