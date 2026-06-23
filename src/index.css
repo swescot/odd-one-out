@@ -1,24 +1,26 @@
 :root {
-  --text: #9ca3af;
-  --text-h: #f3f4f6;
-  --bg: #16171d;
-  --surface: #1f2028;
-  --surface-2: #262834;
-  --border: #2e303a;
-  --accent: #c084fc;
-  --accent-bg: rgba(192, 132, 252, 0.15);
-  --accent-border: rgba(192, 132, 252, 0.5);
-  --good: #4ade80;
-  --bad: #f87171;
-  --warn: #fbbf24;
+  --ink: #221f3b;
+  --cream: #fffdf7;
+  --surface: #ffffff;
+  --surface-2: #fbf3e3;
+  --muted: #6b6783;
+  --hint: #9a96ad;
+  --coral: #ff6b5e;
+  --teal: #1fc8a9;
+  --butter: #ffc94d;
+  --sky: #5bb8ff;
+  --pink: #ff8fc7;
+  --good: #1fc8a9;
+  --bad: #ff5e5e;
+  --warn: #ffb020;
 
-  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --sans: "Fredoka", system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
   font: 17px/1.45 var(--sans);
-  color: var(--text);
-  background: var(--bg);
-  color-scheme: dark;
+  color: var(--ink);
+  background: #ffeeb0;
+  color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -29,6 +31,7 @@
 
 body {
   margin: 0;
+  background: #ffeeb0;
 }
 
 #root {
@@ -39,16 +42,17 @@ body {
 
 h1,
 h2 {
-  color: var(--text-h);
-  font-weight: 600;
+  color: var(--ink);
   margin: 0;
 }
 h1 {
-  font-size: 32px;
+  font-size: 34px;
+  font-weight: 700;
   letter-spacing: -0.5px;
 }
 h2 {
-  font-size: 20px;
+  font-size: 22px;
+  font-weight: 600;
 }
 p {
   margin: 0;
