@@ -19,6 +19,9 @@ Running backlog for Odd One Out. Loose priority order; move things around freely
 - [ ] "Play again with the same players" from the game-over screen.
 - [ ] Graceful handling if the **host** leaves mid-game.
 - [ ] Sound / haptics on key moments (reveal, your turn, timer running out).
+- [ ] **Animations** — transitions and micro-interactions (phase changes,
+      button presses, timer, the reveal, score counting up) to make the
+      playful theme feel alive.
 - [ ] **Player avatars** — a set of animated avatars, randomly assigned to
       players as they join.
 - [ ] **Add tracking** — analytics (clarify scope: usage/funnel analytics vs
