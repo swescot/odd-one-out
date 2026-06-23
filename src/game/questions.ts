@@ -558,4 +558,18 @@ export const QUESTIONS: QuestionCard[] = [
     oooPrompt: "Pick a number between 0 and 60.",
     syntax: { kind: "integer", min: 0, max: 60 },
   },
+  {
+    id: "wait-five-minutes",
+    question:
+      "If someone says they'll be five minutes, how many more minutes is it acceptable to wait?",
+    oooPrompt: "Pick a number between 0 and 60.",
+    syntax: { kind: "integer", min: 0, max: 60 },
+  },
+  {
+    id: "time-travel-1800",
+    question:
+      "If you were transported back to the year 1800, what item would you bring with you?",
+    oooPrompt: "Name an item.",
+    syntax: { kind: "phrase", maxLen: 120 },
+  },
 ];
