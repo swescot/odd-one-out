@@ -36,18 +36,28 @@ including the planned Imposter mode, and [TODO.md](TODO.md) for the backlog.
 
 Vite + React + TypeScript, PeerJS for networking. No backend.
 
-## Getting started
+## Play
+
+The app is live at **https://swescot.github.io/odd-one-out/** — open it on any
+device, host a game, and share the code (or eventually a link). Because it's
+peer-to-peer over the internet, players do **not** need to be on the same
+network.
+
+You need at least **3 players** to start a round.
+
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the printed `Local` URL to host. To play with other devices, they must be
-on the **same network** — open the printed `Network` URL on each phone (the dev
-server is configured with `server.host: true` to expose it on the LAN).
+Open the printed `Local` URL. To test across devices on your LAN without
+deploying, open the printed `Network` URL on each phone (the dev server runs
+with `server.host: true`).
 
-You need at least **3 players** to start a round.
+Pushing to `main` builds and publishes to GitHub Pages automatically (see
+[.github/workflows/deploy.yml](.github/workflows/deploy.yml)).
 
 ## Scripts
 
