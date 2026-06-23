@@ -25,7 +25,7 @@ export const QUESTIONS: QuestionCard[] = [
   },
   {
     id: "litres-water",
-    question: "How many litres of water could you drink in a day?",
+    question: "How many liters of water could you drink in a day?",
     oooPrompt: "Pick a number between 0 and 100.",
     syntax: { kind: "integer", min: 0, max: 100 },
   },
@@ -289,7 +289,7 @@ export const QUESTIONS: QuestionCard[] = [
   },
   {
     id: "least-favourite-month",
-    question: "What is your least favourite month?",
+    question: "What is your least favorite month?",
     oooPrompt: "Name a month.",
     syntax: { kind: "phrase", maxLen: 80 },
   },
@@ -399,7 +399,7 @@ export const QUESTIONS: QuestionCard[] = [
   },
   {
     id: "favourite-month",
-    question: "What is your favourite month?",
+    question: "What is your favorite month?",
     oooPrompt: "Name a month.",
     syntax: { kind: "phrase", maxLen: 80 },
   },
