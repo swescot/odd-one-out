@@ -161,7 +161,9 @@ input:focus {
   font-size: 19px;
 }
 .actions-row {
+  display: flex;
   flex-direction: row;
+  gap: 12px;
 }
 .actions-row button {
   flex: 1;
