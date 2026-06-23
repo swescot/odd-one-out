@@ -25,8 +25,9 @@ export type Phase =
   | "answering" // everyone writes an answer (odd one out only sees a hint)
   | "discussion" // answers revealed; players motivate them out loud
   | "voting" // everyone votes for who they think is the odd one out
-  | "reveal" // odd one out + answers + vote tally shown
-  | "scoring" // round leaderboard shown
+  | "reveal" // odd one out + vote tally shown
+  | "roundScores" // this round's per-player point breakdown
+  | "scoring" // cumulative standings
   | "gameOver";
 
 /**
@@ -55,6 +56,28 @@ export interface Answer {
   text: string;
 }
 
+/** Per-player breakdown of how a round's points were earned, for display. */
+export interface RoundResult {
+  playerId: PlayerId;
+  isOdd: boolean;
+  /** Net points this round (pre cumulative floor; can be negative). */
+  delta: number;
+  /** Detective who voted for the odd one out. */
+  caught: boolean;
+  /** Streak multiplier applied to the catch (1 if none). */
+  streakMult: number;
+  /** Detective minority (×5) or odd-one-out evasion (×2) bonus; 1 if none. */
+  bonusMult: number;
+  /** Votes this player received. */
+  votesReceived: number;
+  /** Points lost to the suspicion penalty (>= 0). */
+  penalty: number;
+  /** Round zeroed because they received a majority of votes. */
+  zeroed: boolean;
+  /** Odd one out only: number of voters fooled. */
+  fooled: number;
+}
+
 export interface Round {
   number: number;
   card: QuestionCard;
@@ -65,6 +88,8 @@ export interface Round {
   votes: Record<PlayerId, PlayerId>;
   /** Whether this round's scores have been applied (keeps reveal idempotent). */
   scored: boolean;
+  /** Per-player point breakdown, populated when the round is scored. */
+  results: RoundResult[];
 }
 
 export interface GameState {

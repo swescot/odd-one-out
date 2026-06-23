@@ -31,9 +31,10 @@ All players are asked a subjective or bizarre question. One player—the Odd One
 * **Step 3: The Vote (45 Seconds)**
   * Every player **except the OOO** casts a private vote on their personal device for the suspected imposter. The OOO does not vote — they sit out and hope they blended in.
 
-* **Step 4: The Resolution**
-  * The reveal screen shows the **identity of the OOO**, **everyone's answers** (the OOO's highlighted), and a **tally of votes received** per player (players with no votes are omitted).
-  * The running **scoreboard** is then shown on a separate screen before the next round.
+* **Step 4: The Resolution** — three screens:
+  * **Reveal** — the **identity of the OOO** and a **tally of votes received** per player (players with no votes are omitted).
+  * **Round Scores** — a per-player breakdown of the points earned that round, showing the multipliers and penalties that applied (see §5).
+  * **Standings** — the updated cumulative leaderboard before the next round. On the final round this is skipped in favour of the final-scores screen.
 
 ### 4. Data Architecture: Questions & OOO Prompts
 Every question is authored with a matching **OOO prompt** — the specific instruction the odd one out sees in place of the question. The prompt is tailored to that question rather than a bare type label like "a number" or "a word", so the OOO lands in the right ballpark and can blend in:

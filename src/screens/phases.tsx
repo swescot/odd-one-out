@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ClientGameState, PlayerId } from "../game/types";
+import type { ClientGameState, PlayerId, RoundResult } from "../game/types";
 import {
   MIN_PLAYERS,
   describeSyntax,
@@ -230,7 +230,6 @@ export function Voting({ game, state }: PhaseProps) {
 export function Reveal({ game, state }: PhaseProps) {
   const round = state.round!;
   const oddName = nameOf(state, round.oddOneOutId);
-  const last = state.roundsPlayed >= state.totalRounds;
 
   // Tally votes received per accused player, busiest first, skipping anyone
   // who got no votes.
@@ -265,27 +264,77 @@ export function Reveal({ game, state }: PhaseProps) {
       )}
 
       {game.isHost && (
-        <button
-          className="primary"
-          onClick={last ? game.finishGame : game.goToScoring}
-        >
-          {last ? "See final scores" : "Show scores"}
+        <button className="primary" onClick={game.goToRoundScores}>
+          Show scores
         </button>
       )}
     </div>
   );
 }
 
-export function Scoring({ game, state }: PhaseProps) {
+export function RoundScores({ game, state }: PhaseProps) {
+  const round = state.round;
+  if (!round) return null;
   const last = state.roundsPlayed >= state.totalRounds;
+  const results = [...round.results].sort((a, b) => b.delta - a.delta);
+
   return (
     <div className="screen phase">
-      <div className="round-tag">Round {state.round?.number} · Scores</div>
-      <h2>Scores</h2>
+      <div className="round-tag">Round {round.number} · Round Scores</div>
+      <ul className="round-scores">
+        {results.map((r) => (
+          <li key={r.playerId}>
+            <div className="rs-top">
+              <span className="rs-name">{nameOf(state, r.playerId)}</span>
+              <span
+                className={`rs-delta ${r.delta > 0 ? "pos" : r.delta < 0 ? "neg" : "zero"}`}
+              >
+                {r.delta > 0 ? "+" : ""}
+                {r.delta}
+              </span>
+            </div>
+            <span className="rs-reason">{reasonFor(r)}</span>
+          </li>
+        ))}
+      </ul>
+      {game.isHost && (
+        <button
+          className="primary"
+          onClick={last ? game.finishGame : game.goToScoring}
+        >
+          {last ? "See final scores" : "Show standings"}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** Human-readable explanation of a round result for the breakdown screen. */
+function reasonFor(r: RoundResult): string {
+  if (r.isOdd) {
+    const parts = [`Odd one out · fooled ${r.fooled}`];
+    if (r.bonusMult > 1) parts.push("×2 evaded the table");
+    return parts.join(" · ");
+  }
+  if (r.zeroed) return "Most suspicious — no points";
+  const parts: string[] = [r.caught ? "Caught the odd one out" : "Missed"];
+  if (r.caught && r.streakMult > 1) parts.push(`×${r.streakMult} streak`);
+  if (r.caught && r.bonusMult > 1) parts.push("×5 lone correct");
+  if (r.penalty > 0) {
+    parts.push(`−${r.penalty} suspicion (${r.votesReceived} vote${r.votesReceived === 1 ? "" : "s"})`);
+  }
+  return parts.join(" · ");
+}
+
+export function Scoring({ game, state }: PhaseProps) {
+  return (
+    <div className="screen phase">
+      <div className="round-tag">Round {state.round?.number} · Standings</div>
+      <h2>Standings</h2>
       <Scores state={state} />
       {game.isHost && (
         <button className="primary" onClick={game.nextRound}>
-          {last ? "See final scores" : "Next round"}
+          Next round
         </button>
       )}
     </div>

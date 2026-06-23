@@ -24,6 +24,7 @@ export interface GameApi {
   goToDiscussion: () => void;
   goToVoting: () => void;
   reveal: () => void;
+  goToRoundScores: () => void;
   goToScoring: () => void;
   finishGame: () => void;
   nextRound: () => void;
@@ -106,6 +107,7 @@ export function useGame(
     goToDiscussion: () => host()?.goToDiscussion(),
     goToVoting: () => host()?.goToVoting(),
     reveal: () => host()?.reveal(),
+    goToRoundScores: () => host()?.goToRoundScores(),
     goToScoring: () => host()?.goToScoring(),
     finishGame: () => host()?.finishGame(),
     nextRound: () => host()?.nextRound(),

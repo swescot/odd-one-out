@@ -7,6 +7,7 @@ import {
   GameOver,
   Lobby,
   Reveal,
+  RoundScores,
   Scoring,
   Voting,
 } from "./phases";
@@ -127,6 +128,8 @@ function renderPhase(phase: string, game: ReturnType<typeof useGame>) {
       return <Voting game={game} state={state} />;
     case "reveal":
       return <Reveal game={game} state={state} />;
+    case "roundScores":
+      return <RoundScores game={game} state={state} />;
     case "scoring":
       return <Scoring game={game} state={state} />;
     case "gameOver":

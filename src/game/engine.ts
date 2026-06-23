@@ -5,6 +5,7 @@ import type {
   Player,
   PlayerId,
   QuestionCard,
+  RoundResult,
   SyntaxType,
 } from "./types";
 import { QUESTIONS } from "./questions";
@@ -123,6 +124,7 @@ function startRound(state: GameState, now: number): GameState {
       answers: [],
       votes: {},
       scored: false,
+      results: [],
     },
   };
 }
@@ -239,14 +241,20 @@ export function revealAndScore(state: GameState): GameState {
     votesReceived[target] = (votesReceived[target] ?? 0) + 1;
   }
 
+  const results: RoundResult[] = [];
   const players = state.players.map((p) => {
     const received = votesReceived[p.id] ?? 0;
 
     if (p.id === oddOneOutId) {
       // OOO: paid per voter they fooled, ×2 if they evaded the majority.
       const fooled = totalVotes - correctVotes;
-      const mult = minorityCaught ? OOO_EVASION_MULTIPLIER : 1;
-      const delta = POINTS * fooled * mult;
+      const bonusMult = minorityCaught ? OOO_EVASION_MULTIPLIER : 1;
+      const delta = POINTS * fooled * bonusMult;
+      results.push({
+        playerId: p.id, isOdd: true, delta, caught: false,
+        streakMult: 1, bonusMult, votesReceived: received, penalty: 0,
+        zeroed: false, fooled,
+      });
       return { ...p, score: Math.max(0, p.score + delta) };
     }
 
@@ -254,20 +262,25 @@ export function revealAndScore(state: GameState): GameState {
     const caught = votes[p.id] === oddOneOutId;
     const streak = caught ? p.streak + 1 : 0;
     const majorityVoted = totalVotes > 0 && received * 2 > totalVotes;
+    const streakMult = caught ? streakMultiplier(p.streak) : 1;
+    const bonusMult = caught && minorityCaught ? MINORITY_MULTIPLIER : 1;
 
     let delta: number;
+    let penalty = 0;
     if (majorityVoted) {
       // The table pegged them as the OOO → no points at all this round.
       delta = 0;
     } else {
-      const reward = caught
-        ? POINTS *
-          streakMultiplier(p.streak) *
-          (minorityCaught ? MINORITY_MULTIPLIER : 1)
-        : 0;
-      delta = reward - SUSPICION_PENALTY * received;
+      const reward = caught ? POINTS * streakMult * bonusMult : 0;
+      penalty = SUSPICION_PENALTY * received;
+      delta = reward - penalty;
     }
 
+    results.push({
+      playerId: p.id, isOdd: false, delta, caught,
+      streakMult, bonusMult, votesReceived: received, penalty,
+      zeroed: majorityVoted, fooled: 0,
+    });
     return { ...p, streak, score: Math.max(0, p.score + delta) };
   });
 
@@ -276,14 +289,20 @@ export function revealAndScore(state: GameState): GameState {
     phase: "reveal",
     phaseDeadline: null,
     roundsPlayed: state.roundsPlayed + 1,
-    round: { ...state.round, scored: true },
+    round: { ...state.round, scored: true, results },
     players,
   };
 }
 
-/** Move from the reveal screen to the round's scoring leaderboard. */
-export function goToScoring(state: GameState): GameState {
+/** Move from the reveal screen to this round's point breakdown. */
+export function goToRoundScores(state: GameState): GameState {
   if (state.phase !== "reveal") return state;
+  return { ...state, phase: "roundScores" };
+}
+
+/** Move from the round breakdown to the cumulative standings. */
+export function goToScoring(state: GameState): GameState {
+  if (state.phase !== "roundScores") return state;
   return { ...state, phase: "scoring" };
 }
 
@@ -292,9 +311,9 @@ export function isFinalRound(state: GameState): boolean {
   return state.roundsPlayed >= state.totalRounds;
 }
 
-/** On the final round, skip the per-round scoreboard: reveal → game over. */
+/** On the final round, skip the standings: round breakdown → game over. */
 export function finishGame(state: GameState): GameState {
-  if (state.phase !== "reveal") return state;
+  if (state.phase !== "roundScores") return state;
   return { ...state, phase: "gameOver", round: null, phaseDeadline: null };
 }
 

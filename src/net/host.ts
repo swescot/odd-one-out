@@ -16,7 +16,8 @@ const PREV_PHASE: Partial<Record<Phase, Phase>> = {
   discussion: "answering",
   voting: "discussion",
   reveal: "voting",
-  scoring: "reveal",
+  roundScores: "reveal",
+  scoring: "roundScores",
   gameOver: "scoring",
 };
 
@@ -214,6 +215,9 @@ export class HostSession {
   reveal(): void {
     this.mutate(engine.revealAndScore);
   }
+  goToRoundScores(): void {
+    this.mutate(engine.goToRoundScores);
+  }
   goToScoring(): void {
     this.mutate(engine.goToScoring);
   }
@@ -259,6 +263,9 @@ export class HostSession {
         this.reveal();
         break;
       case "reveal":
+        this.goToRoundScores();
+        break;
+      case "roundScores":
         if (engine.isFinalRound(this.state)) this.finishGame();
         else this.goToScoring();
         break;
