@@ -43,6 +43,7 @@ export function createGame(code: string): GameState {
     totalRounds: DEFAULT_TOTAL_ROUNDS,
     roundsPlayed: 0,
     phaseDeadline: null,
+    usedQuestionIds: [],
   };
 }
 
@@ -83,16 +84,21 @@ export function setConnected(
   };
 }
 
-function startRound(
-  state: GameState,
-  usedCardIds: Set<string>,
-  now: number,
-): GameState {
-  const pool = QUESTIONS.filter((q) => !usedCardIds.has(q.id));
-  const card: QuestionCard = pick(pool.length ? pool : QUESTIONS);
+function startRound(state: GameState, now: number): GameState {
+  let used = state.usedQuestionIds;
+  let available = QUESTIONS.filter((q) => !used.includes(q.id));
+  if (available.length === 0) {
+    // Every question has been featured — reset the cycle, but avoid immediately
+    // repeating the one we just showed.
+    const lastId = state.round?.card.id;
+    used = [];
+    available = QUESTIONS.filter((q) => q.id !== lastId);
+  }
+  const card: QuestionCard = pick(available);
   const oddOneOut = pick(state.players);
   return {
     ...state,
+    usedQuestionIds: [...used, card.id],
     phase: "answering",
     phaseDeadline: deadline(now, DURATIONS.answering),
     round: {
@@ -108,7 +114,7 @@ function startRound(
 
 export function startGame(state: GameState, now: number): GameState {
   if (state.players.length < MIN_PLAYERS) return state;
-  return startRound({ ...state, roundsPlayed: 0 }, new Set(), now);
+  return startRound({ ...state, roundsPlayed: 0, usedQuestionIds: [] }, now);
 }
 
 export function submitAnswer(
@@ -253,8 +259,7 @@ export function nextRound(state: GameState, now: number): GameState {
   if (state.roundsPlayed >= state.totalRounds) {
     return { ...state, phase: "gameOver", round: null, phaseDeadline: null };
   }
-  const usedCardIds = new Set(state.round ? [state.round.card.id] : []);
-  return startRound(state, usedCardIds, now);
+  return startRound(state, now);
 }
 
 /**

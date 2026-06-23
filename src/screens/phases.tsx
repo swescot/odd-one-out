@@ -115,7 +115,6 @@ export function Answering({ game, state }: PhaseProps) {
               placeholder={describeSyntax(syntax)}
               maxLength={hints.maxLength}
               inputMode={hints.inputMode}
-              autoFocus
             />
             {draft.trim() && error && <span className="error">{error}</span>}
           </label>

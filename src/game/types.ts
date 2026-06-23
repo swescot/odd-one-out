@@ -72,6 +72,9 @@ export interface GameState {
   /** Rounds to play before gameOver. */
   totalRounds: number;
   roundsPlayed: number;
+  /** Question ids already featured this cycle, so none repeats until the deck
+   * is exhausted and reset. */
+  usedQuestionIds: string[];
   /**
    * Epoch ms when the current timed phase auto-advances, or null for untimed
    * phases (lobby, reveal, gameOver). The host owns the clock; clients render a
