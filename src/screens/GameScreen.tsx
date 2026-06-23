@@ -19,13 +19,6 @@ interface GameScreenProps {
   onLeave: () => void;
 }
 
-const STATUS_TEXT: Record<string, string> = {
-  starting: "Starting game…",
-  connecting: "Connecting…",
-  reconnecting: "Reconnecting…",
-  error: "Connection problem",
-};
-
 export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
   const game = useGame(mode, code, name);
   const { state, status, statusDetail } = game;
@@ -51,7 +44,9 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const showBanner = status !== "ready" && status !== "connected";
+  // Only surface a problem; skip the transient "starting/connecting" labels
+  // (they flash and shift the layout on a normal, fast connect).
+  const showError = status === "error";
 
   return (
     <div className="game">
@@ -75,10 +70,9 @@ export function GameScreen({ mode, code, name, onLeave }: GameScreenProps) {
         </div>
       </div>
 
-      {showBanner && (
-        <div className={`banner ${status === "error" ? "err" : ""}`}>
-          {STATUS_TEXT[status] ?? status}
-          {status === "error" && statusDetail ? ` (${statusDetail})` : ""}
+      {showError && (
+        <div className="banner err">
+          Something went wrong{statusDetail ? ` (${statusDetail})` : ""}
         </div>
       )}
 

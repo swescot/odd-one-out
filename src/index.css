@@ -19,7 +19,7 @@
 
   font: 17px/1.45 var(--sans);
   color: var(--ink);
-  background: #ffeeb0;
+  background: #fffdf7;
   color-scheme: light;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -31,7 +31,7 @@
 
 body {
   margin: 0;
-  background: #ffeeb0;
+  background: #fffdf7;
 }
 
 #root {

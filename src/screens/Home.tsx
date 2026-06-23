@@ -40,6 +40,11 @@ export function Home({ onStart }: HomeProps) {
 
   return (
     <div className="screen home">
+      <div className="bg-circles" aria-hidden="true">
+        <span className="circle c1"></span>
+        <span className="circle c2"></span>
+        <span className="circle c3"></span>
+      </div>
       <header className="brand">
         <h1>Odd One Out</h1>
         <p className="tagline">
@@ -48,24 +53,22 @@ export function Home({ onStart }: HomeProps) {
         </p>
       </header>
 
-      <label className="field">
-        <span>Your name</span>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Sam"
-          maxLength={16}
-          autoComplete="off"
-        />
-      </label>
+      <input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Your name"
+        aria-label="Your name"
+        maxLength={16}
+        autoComplete="off"
+      />
 
       {!joining ? (
-        <div className="actions">
-          <button className="primary" disabled={!canCreate} onClick={create}>
-            Host a new game
+        <div className="actions actions-row">
+          <button className="ghost" disabled={!canCreate} onClick={create}>
+            Host game
           </button>
-          <button className="ghost" onClick={() => setJoining(true)}>
-            Join with a code
+          <button className="primary" onClick={() => setJoining(true)}>
+            Join game
           </button>
         </div>
       ) : (
@@ -82,12 +85,14 @@ export function Home({ onStart }: HomeProps) {
               className="code-input"
             />
           </label>
-          <button className="primary" disabled={!canJoin} onClick={join}>
-            Join game
-          </button>
-          <button className="ghost" onClick={() => setJoining(false)}>
-            Back
-          </button>
+          <div className="actions-row">
+            <button className="ghost" onClick={() => setJoining(false)}>
+              Back
+            </button>
+            <button className="primary" disabled={!canJoin} onClick={join}>
+              Join game
+            </button>
+          </div>
         </div>
       )}
     </div>
