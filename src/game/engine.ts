@@ -273,7 +273,9 @@ export function revealAndScore(state: GameState): GameState {
     } else {
       const reward = caught ? POINTS * streakMult * bonusMult : 0;
       penalty = SUSPICION_PENALTY * received;
-      delta = reward - penalty;
+      // A round's net is floored at 0: the penalty can cancel this round's
+      // reward but never eats into banked points.
+      delta = Math.max(0, reward - penalty);
     }
 
     results.push({

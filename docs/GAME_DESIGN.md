@@ -66,7 +66,7 @@ Designed to reward reading the room (not just guessing the obvious) and to punis
 * Earns **100 per voter they fooled** (anyone who voted for someone else).
 * **×2** if only a **minority** of voters caught them (they evaded the table).
 
-**General:** the two multipliers **stack** (a lone correct catch on a 3-round streak = `100 × 2 × 5 = 1000`). A single round can be a net loss, but **cumulative scores never drop below 0**.
+**General:** the two multipliers **stack** (a lone correct catch on a 3-round streak = `100 × 2 × 5 = 1000`). The suspicion penalty can cancel a round's reward, but **a round's net is floored at 0** — you never lose banked points.
 
 ---
 
