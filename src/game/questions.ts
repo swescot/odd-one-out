@@ -412,7 +412,7 @@ export const QUESTIONS: QuestionCard[] = [
   },
   {
     id: "movietheater-food",
-    question: "What is a food you’d bring into a movie theater?",
+    question: "What is a food you'd bring into a movie theater?",
     oooPrompt: "Name a food.",
     syntax: { kind: "phrase", maxLen: 120 },
   },
@@ -494,7 +494,7 @@ export const QUESTIONS: QuestionCard[] = [
   },
   {
     id: "max-pay-average-burger",
-    question: "What is the most you’d pay for an average hamburger?",
+    question: "What is the most you'd pay for an average hamburger?",
     oooPrompt: "Write an amount of money.",
     syntax: { kind: "phrase", maxLen: 100 },
   },
